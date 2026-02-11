@@ -10,6 +10,7 @@ public class ProdutoTela extends javax.swing.JFrame {
         private List<Produto> listaProdutos = new ArrayList<>();
         private int proximoId = 1;
         private DefaultTableModel modelo;
+        private int produtoSelecionadoId = -1; // ID do produto selecionado para edição
 
         public ProdutoTela() {
                 initComponents();
@@ -21,157 +22,127 @@ public class ProdutoTela extends javax.swing.JFrame {
 
         private void initComponents() {
 
-                jScrollPane1 = new javax.swing.JScrollPane();
-                jTable1 = new javax.swing.JTable();
                 jLabel1 = new javax.swing.JLabel();
                 jTextField1 = new javax.swing.JTextField();
                 jLabel2 = new javax.swing.JLabel();
                 jTextField2 = new javax.swing.JTextField();
                 jButton1 = new javax.swing.JButton();
                 jButton2 = new javax.swing.JButton();
+                jButton3 = new javax.swing.JButton();
+                jButton4 = new javax.swing.JButton();
                 jScrollPane2 = new javax.swing.JScrollPane();
                 jTable2 = new javax.swing.JTable();
 
-                jTable1.setModel(new javax.swing.table.DefaultTableModel(
-                                new Object[][] {
-                                                { null, null, null, null },
-                                                { null, null, null, null },
-                                                { null, null, null, null },
-                                                { null, null, null, null }
-                                },
-                                new String[] {
-                                                "Title 1", "Title 2", "Title 3", "Title 4"
-                                }));
-                jScrollPane1.setViewportView(jTable1);
-
                 setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-                jLabel1.setFont(new java.awt.Font("Arial Black", 0, 12)); // NOI18N
                 jLabel1.setText("Nome:");
-
-                jLabel2.setFont(new java.awt.Font("Arial Black", 0, 12)); // NOI18N
                 jLabel2.setText("Valor:");
 
-                jTextField2.addActionListener(new java.awt.event.ActionListener() {
-                        public void actionPerformed(java.awt.event.ActionEvent evt) {
-                                jTextField2ActionPerformed(evt);
-                        }
-                });
-
                 jButton1.setText("Salvar");
-                jButton1.addActionListener(new java.awt.event.ActionListener() {
-                        public void actionPerformed(java.awt.event.ActionEvent evt) {
-                                jButton1ActionPerformed(evt);
-                        }
-                });
+                jButton1.addActionListener(evt -> salvarProduto());
 
                 jButton2.setText("Cancelar");
-                jButton2.addActionListener(new java.awt.event.ActionListener() {
-                        public void actionPerformed(java.awt.event.ActionEvent evt) {
-                                jButton2ActionPerformed(evt);
-                        }
+                jButton2.addActionListener(evt -> {
+                        limparCampos();
+                        produtoSelecionadoId = -1;
+                        jButton1.setText("Salvar");
                 });
 
-                jTable2.setModel(new javax.swing.table.DefaultTableModel(
-                                new Object[][] {
-                                                { null, null, null },
-                                                { null, null, null },
-                                                { null, null, null },
-                                                { null, null, null }
-                                },
-                                new String[] {
-                                                "ID", "Nome", "Valor"
-                                }) {
-                        Class[] types = new Class[] {
-                                        java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class
-                        };
+                jButton3.setText("Editar");
+                jButton3.addActionListener(evt -> editarProduto());
+
+                jButton4.setText("Excluir");
+                jButton4.addActionListener(evt -> excluirProduto());
+
+                jTable2.setModel(new DefaultTableModel(
+                                new Object[][] {},
+                                new String[] { "ID", "Nome", "Valor" }) {
+                        Class[] types = new Class[] { Integer.class, String.class, Integer.class };
 
                         public Class getColumnClass(int columnIndex) {
                                 return types[columnIndex];
                         }
+
+                        public boolean isCellEditable(int row, int column) {
+                                return false;
+                        }
                 });
+
                 jScrollPane2.setViewportView(jTable2);
 
+                // Layout simples
                 javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-
                 getContentPane().setLayout(layout);
                 layout.setHorizontalGroup(
                                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                 .addGroup(layout.createSequentialGroup()
+                                                                .addGap(20)
                                                                 .addGroup(layout.createParallelGroup(
                                                                                 javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                .addComponent(jScrollPane2,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                360,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                                 .addGroup(layout.createSequentialGroup()
-                                                                                                .addGap(26, 26, 26)
-                                                                                                .addGroup(layout.createParallelGroup(
-                                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                                                .addComponent(jLabel1)
-                                                                                                                .addComponent(jLabel2,
-                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                                                42,
-                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                                                .addGap(18, 18, 18)
-                                                                                                .addGroup(layout.createParallelGroup(
-                                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
-                                                                                                                false)
-                                                                                                                .addGroup(layout.createSequentialGroup()
-                                                                                                                                .addComponent(jButton1)
-                                                                                                                                .addPreferredGap(
-                                                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-                                                                                                                                                53,
-                                                                                                                                                Short.MAX_VALUE)
-                                                                                                                                .addComponent(jButton2))
-                                                                                                                .addComponent(jTextField2)
-                                                                                                                .addComponent(jTextField1)))
-                                                                                .addGroup(layout.createSequentialGroup()
-                                                                                                .addGap(36, 36, 36)
-                                                                                                .addComponent(jScrollPane2,
+                                                                                                .addComponent(jLabel1)
+                                                                                                .addGap(10)
+                                                                                                .addComponent(jTextField1,
                                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                                303,
-                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                                                .addContainerGap(68, Short.MAX_VALUE)));
+                                                                                                                200,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                                .addGroup(layout.createSequentialGroup()
+                                                                                                .addComponent(jLabel2)
+                                                                                                .addGap(10)
+                                                                                                .addComponent(jTextField2,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                200,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                                .addGroup(layout.createSequentialGroup()
+                                                                                                .addComponent(jButton1)
+                                                                                                .addGap(10)
+                                                                                                .addComponent(jButton2)
+                                                                                                .addGap(10)
+                                                                                                .addComponent(jButton3)
+                                                                                                .addGap(10)
+                                                                                                .addComponent(jButton4)))
+                                                                .addContainerGap(20, Short.MAX_VALUE)));
                 layout.setVerticalGroup(
                                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                 .addGroup(layout.createSequentialGroup()
-                                                                .addContainerGap()
+                                                                .addGap(10)
                                                                 .addGroup(layout.createParallelGroup(
                                                                                 javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                                .addComponent(jLabel1,
-                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                30,
-                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                .addComponent(jLabel1)
                                                                                 .addComponent(jTextField1,
                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
                                                                                                 30,
                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                .addPreferredGap(
-                                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addGap(10)
                                                                 .addGroup(layout.createParallelGroup(
                                                                                 javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                                .addComponent(jLabel2,
-                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                30,
-                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                .addComponent(jLabel2)
                                                                                 .addComponent(jTextField2,
                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
                                                                                                 30,
                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                .addGap(18, 18, 18)
+                                                                .addGap(10)
                                                                 .addGroup(layout.createParallelGroup(
                                                                                 javax.swing.GroupLayout.Alignment.BASELINE)
                                                                                 .addComponent(jButton1)
-                                                                                .addComponent(jButton2))
-                                                                .addGap(55, 55, 55)
+                                                                                .addComponent(jButton2)
+                                                                                .addComponent(jButton3)
+                                                                                .addComponent(jButton4))
+                                                                .addGap(20)
                                                                 .addComponent(jScrollPane2,
                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                204,
+                                                                                200,
                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                Short.MAX_VALUE)));
+                                                                .addContainerGap(10, Short.MAX_VALUE)));
 
                 pack();
-        }// </editor-fold>//GEN-END:initComponents
+        }
 
-        // Método para salvar produto
+        // Salvar ou atualizar produto
         private void salvarProduto() {
                 String nome = jTextField1.getText();
                 String valorTexto = jTextField2.getText();
@@ -183,26 +154,61 @@ public class ProdutoTela extends javax.swing.JFrame {
 
                 try {
                         int valor = Integer.parseInt(valorTexto);
-
                         if (valor < 0) {
                                 javax.swing.JOptionPane.showMessageDialog(this, "Valor não pode ser negativo!");
                                 return;
                         }
 
-                        Produto produto = new Produto(proximoId++, nome, valor);
-                        listaProdutos.add(produto);
+                        if (produtoSelecionadoId >= 0) {
+                                // Editar produto existente
+                                for (Produto p : listaProdutos) {
+                                        if (p.getId() == produtoSelecionadoId) {
+                                                p.setNome(nome);
+                                                p.setValor(valor);
+                                                break;
+                                        }
+                                }
+                                produtoSelecionadoId = -1;
+                                jButton1.setText("Salvar");
+                        } else {
+                                // Novo produto
+                                Produto p = new Produto(proximoId++, nome, valor);
+                                listaProdutos.add(p);
+                        }
 
-                        modelo.addRow(new Object[] {
-                                        produto.getId(),
-                                        produto.getNome(),
-                                        produto.getValor()
-                        });
-
+                        atualizarTabela();
                         limparCampos();
 
                 } catch (NumberFormatException e) {
                         javax.swing.JOptionPane.showMessageDialog(this, "Valor deve ser numérico!");
                 }
+        }
+
+        // Editar produto
+        private void editarProduto() {
+                int linha = jTable2.getSelectedRow();
+                if (linha < 0) {
+                        javax.swing.JOptionPane.showMessageDialog(this, "Selecione um produto na tabela!");
+                        return;
+                }
+
+                produtoSelecionadoId = (int) modelo.getValueAt(linha, 0);
+                jTextField1.setText((String) modelo.getValueAt(linha, 1));
+                jTextField2.setText(String.valueOf(modelo.getValueAt(linha, 2)));
+                jButton1.setText("Atualizar");
+        }
+
+        // Excluir produto
+        private void excluirProduto() {
+                int linha = jTable2.getSelectedRow();
+                if (linha < 0) {
+                        javax.swing.JOptionPane.showMessageDialog(this, "Selecione um produto para excluir!");
+                        return;
+                }
+
+                int idExcluir = (int) modelo.getValueAt(linha, 0);
+                listaProdutos.removeIf(p -> p.getId() == idExcluir);
+                atualizarTabela();
         }
 
         // Limpar campos
@@ -212,44 +218,26 @@ public class ProdutoTela extends javax.swing.JFrame {
                 jTextField1.requestFocus();
         }
 
-        // Evento botão Salvar
-        private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-                salvarProduto();
-        }
-
-        // Evento botão Cancelar
-        private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
-                limparCampos();
-        }
-
-        private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {
-                // Não é necessário, pode deixar vazio
-        }
-
-        public static void main(String args[]) {
-                try {
-                        for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager
-                                        .getInstalledLookAndFeels()) {
-                                if ("Nimbus".equals(info.getName())) {
-                                        javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                                        break;
-                                }
-                        }
-                } catch (Exception ex) {
-                        ex.printStackTrace();
+        // Atualizar tabela
+        private void atualizarTabela() {
+                modelo.setRowCount(0);
+                for (Produto p : listaProdutos) {
+                        modelo.addRow(new Object[] { p.getId(), p.getNome(), p.getValor() });
                 }
+        }
 
+        public static void main(String[] args) {
                 java.awt.EventQueue.invokeLater(() -> new ProdutoTela().setVisible(true));
         }
 
-        // Variables declaration - do not modify
-        private javax.swing.JButton jButton1;
-        private javax.swing.JButton jButton2;
+        // Variáveis
+        private javax.swing.JButton jButton1; // Salvar/Atualizar
+        private javax.swing.JButton jButton2; // Cancelar
+        private javax.swing.JButton jButton3; // Editar
+        private javax.swing.JButton jButton4; // Excluir
         private javax.swing.JLabel jLabel1;
         private javax.swing.JLabel jLabel2;
-        private javax.swing.JScrollPane jScrollPane1;
         private javax.swing.JScrollPane jScrollPane2;
-        private javax.swing.JTable jTable1;
         private javax.swing.JTable jTable2;
         private javax.swing.JTextField jTextField1;
         private javax.swing.JTextField jTextField2;
