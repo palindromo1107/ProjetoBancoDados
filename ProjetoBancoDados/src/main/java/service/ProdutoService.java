@@ -7,11 +7,7 @@ import model.Produto;
 
 public class ProdutoService {
 
-    private ProdutoDao produtoDAO;
-
-    public ProdutoService() {
-        this.produtoDAO = new ProdutoDao();
-    }
+    private ProdutoDao produtoDAO = new ProdutoDao();
 
     public void cadastrarProduto(Produto produto) {
         validarProduto(produto);
@@ -26,18 +22,33 @@ public class ProdutoService {
         try {
             return produtoDAO.listar();
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao listar os produtos", e);
+            throw new RuntimeException("Erro ao listar produtos", e);
         }
     }
 
     public Produto buscarProdutoPorId(int id) {
         if (id <= 0) {
-            throw new IllegalArgumentException("Erro ao buscar produto");
+            throw new IllegalArgumentException("ID inválido");
         }
+
         try {
             return produtoDAO.buscar(id);
         } catch (Exception e) {
-            throw new RuntimeException("Id não encontrado", e);
+            throw new RuntimeException("Erro ao buscar produto", e);
+        }
+    }
+
+    public void atualizarProduto(Produto produto) {
+        validarProduto(produto);
+
+        if (produto.getId() <= 0) {
+            throw new IllegalArgumentException("ID inválido para atualização");
+        }
+
+        try {
+            produtoDAO.atualizar(produto);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao atualizar produto", e);
         }
     }
 
@@ -45,14 +56,13 @@ public class ProdutoService {
         if (id <= 0) {
             throw new IllegalArgumentException("ID inválido");
         }
+
         try {
             produtoDAO.excluir(id);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao excluir o produto", e);
+            throw new RuntimeException("Erro ao excluir produto", e);
         }
     }
-
-    // ===== regras privadas =====
 
     private void validarProduto(Produto produto) {
         if (produto == null) {
@@ -64,7 +74,7 @@ public class ProdutoService {
         }
 
         if (produto.getValor() <= 0) {
-            throw new IllegalArgumentException("Valor inválido");
+            throw new IllegalArgumentException("Valor deve ser maior que zero");
         }
     }
 }
